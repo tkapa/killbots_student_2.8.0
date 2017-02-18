@@ -33,6 +33,9 @@ void StrayCat::init(const BotInitialData &initialData, BotAttributes &attrib)
 
 void StrayCat::update(const BotInput &input, BotOutput27 &output)
 {
+	output.text.clear();
+	char buf[100];
+
 	//Changing behaviour based on state
 	switch (currentState) {
 	case ms_Wander:
@@ -47,50 +50,42 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 		output.motor = 1.0;
 	}
 
-	//Looking in wandering state
 	{
-		output.lookDirection.set(0, 1);
-
-		if (input.scanResult.size >= 0) {
-			for (int i = 0; i < input.scanResult.size; ++i) {
-				if (input.scanResult.size[i].type == VisibleThing::e_robot) {
-					//enemyInitPosition = &input.scanResult.size[i].position;
+		//If the result from the scan comes back with something in it, check what it is
+		if (input.scanResult.size() > 0) {
+			for (int i = 0; i >= input.scanResult.size(); ++i) {
+				if (input.scanResult[i].type == VisibleThing::e_robot && currentState == ms_Wander) {
+					m_enemyInitPosition = input.scanResult[i].position;
 					currentState = ms_EnemySeen;
 				}
 			}
 		}
-
-		output.action = BotOutput::scan;
 	}
+		sprintf(buf, "%d", input.health);
+		gifNo = 6;
+		output.action = BotOutput::scan;
 	break;
 
 	case ms_EnemySeen:
 	{
-		output.lookDirection.set(enemyInitPosition);
-	}
-	break;
-
-	case ms_Alerted:
-	{
-
+		//If enemy check returns true
+		//Shoot at the enemy
+		gifNo = 7;
 	}
 	break;
 
 	case ms_Chase:
 	{
-
+		//If enemy has left my sight
+		//Attempt to find the enemy using the enemie's last position and predicted path
+		gifNo = 4;
 	}
 	break;
 
 	}
-
-	output.text.clear();
-	char buf[100];
 	sprintf(buf, "%d", input.health);
 	output.text.push_back(TextMsg(buf, input.position - kf::Vector2(0.0f, 1.0f), 0.0f, 0.7f, 1.0f,80));
 
-	//Change sprite
-	SpriteChange();
 	output.spriteFrame = gifNo;
 }
 
@@ -101,21 +96,4 @@ void StrayCat::result(bool won)
 void StrayCat::bulletResult(bool hit)
 {
 
-}
-
-//Alter the current sprite based upon state
-void StrayCat::SpriteChange(){
-	switch (currentState) {
-	case ms_Wander:
-		gifNo = 6;
-		break;
-
-	case ms_Alerted:
-		gifNo = 3;
-		break;
-
-	case ms_Chase:
-		gifNo = 4;
-		break;
-	}
 }
