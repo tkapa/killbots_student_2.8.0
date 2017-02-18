@@ -26,6 +26,7 @@ public:
 	virtual void update(const BotInput &input, BotOutput27 &output);
 	virtual void result(bool won);
 	virtual void bulletResult(bool hit);
+	void wander(const BotInput &input, BotOutput &output);
 
 	kf::Xor128 m_rand;
 	kf::Vector2 m_moveTarget;

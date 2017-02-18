@@ -4,7 +4,9 @@ c:\users\kapa\documents\github\killbots_student_2.8.0\projects\straycat\bot.cpp(
 c:\users\kapa\documents\github\killbots_student_2.8.0\projects\straycat\bot.cpp(14): warning C4302: 'type cast': truncation from 'StrayCat *const ' to 'int'
 c:\users\kapa\documents\github\killbots_student_2.8.0\projects\straycat\bot.cpp(14): warning C4244: 'argument': conversion from 'time_t' to 'kf::u32', possible loss of data
 c:\users\kapa\documents\github\killbots_student_2.8.0\projects\straycat\bot.cpp(30): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\kapa\documents\github\killbots_student_2.8.0\projects\straycat\bot.cpp(45): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\kapa\documents\github\killbots_student_2.8.0\projects\straycat\bot.cpp(84): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+c:\users\kapa\documents\github\killbots_student_2.8.0\projects\straycat\bot.cpp(50): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\kapa\documents\github\killbots_student_2.8.0\projects\straycat\bot.cpp(68): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
+c:\users\kapa\documents\github\killbots_student_2.8.0\projects\straycat\bot.cpp(95): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\stdio.h(1769): note: see declaration of 'sprintf'
   StrayCat.vcxproj -> C:\Users\Kapa\Documents\GitHub\killbots_student_2.8.0\bin\data\bots\StrayCat\StrayCat_d.dll
