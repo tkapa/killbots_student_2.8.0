@@ -35,6 +35,25 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 {
 	output.text.clear();
 	char buf[100];
+	output.action = BotOutput::scan;
+	//Can and probably should be replaced with more controlled pathing
+	output.moveDirection = m_moveTarget - input.position;
+	if (output.moveDirection.length() < 2)
+	{
+		m_moveTarget.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
+	}
+	output.motor = 1.0;
+
+	//If the result from the scan comes back with something in it, check what it is
+	if (input.scanResult.size() > 0) {
+		for (int i = 0; i >= input.scanResult.size(); ++i) {
+			if (input.scanResult[i].type == VisibleThing::e_robot && currentState == ms_Wander) {
+				m_enemyInitPosition = input.scanResult[i].position;
+				output.text.push_back(TextMsg("Gottem", input.position - kf::Vector2(0.0f, 1.0f), 0.0f, 0.7f, 1.0f, 80));
+				currentState = ms_EnemySeen;
+			}
+		}
+	}
 /*
 	//Changing behaviour based on state
 	switch (currentState) {
