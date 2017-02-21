@@ -35,8 +35,6 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 {
 	seenEnemy = false;
 	
-	//Changing behaviour based on state
-	//Things Stray Cat will perform in the wandering state		
 	//Movement in wander state
 	output.moveDirection = m_moveTarget - input.position;
 	if (output.moveDirection.length() < 2)
@@ -48,7 +46,7 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 	if (input.scanResult.size() > 0){
 		for (int i = 0; i < input.scanResult.size(); ++i){
 			if (input.scanResult[i].type == VisibleThing::e_robot){
-				m_enemyInitPos = input.scanResult[i].position;
+				m_enemyCurrPos = input.scanResult[i].position;
 				seenEnemy = true;
 				break;
 			}
@@ -57,6 +55,25 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 
 	if (seenEnemy) {
 		//Try to shoot and stuff.
+		kf::Vector2 estimatedEnemyPosition = m_enemyCurrPos;
+		if (m_enemyUpdateCount>-1)
+		{
+			kf::Vector2 delta = m_enemyCurrPos - m_enemyInitPos;
+			estimatedEnemyPosition = m_enemyCurrPos + (delta / (m_updateCount - m_enemyUpdateCount)) * 5;
+			Line l;
+			l.start = m_enemyCurrPos;
+			l.end = estimatedEnemyPosition;
+			l.r = 1;
+			l.g = 1;
+			l.b = 1;
+			output.lines.push_back(l);
+		}
+		// Shooting
+		output.lookDirection = estimatedEnemyPosition - input.position;
+		output.moveDirection = output.lookDirection;
+		m_moveTarget = estimatedEnemyPosition;
+		output.action = BotOutput::shoot;
+		m_lookAngle -= m_initialData.scanFOV * 3;
 	}
 	else {
 		// Scanning
@@ -65,7 +82,6 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 		output.action = BotOutput::scan;
 	}
 
-
 	gifNo = 3;
 		
 	//output.text.clear();
@@ -73,10 +89,14 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 	//sprintf(buf, "%d", input.health);
 	//output.text.push_back(TextMsg(buf, input.position - kf::Vector2(0.0f, 1.0f), 0.0f, 0.7f, 1.0f,80));
 
-	if (seenEnemy) {
+	output.spriteFrame = gifNo;
+
+	if (seenEnemy)
+	{
+		m_enemyUpdateCount = m_updateCount;
 		m_enemyInitPos = m_enemyCurrPos;
 	}
-	output.spriteFrame = gifNo;
+	m_updateCount++;
 }
 
 void StrayCat::result(bool won)
