@@ -37,6 +37,7 @@ public:
 	//Essential
 	bool seenEnemy = false;	//true if enemy is seen
 	float m_lookAngle = 0;    //Angle Stray Cat will look;
+	float m_lookAngleMultiplier = 2; //Governs how large the rotation of the scan
 	int fireCount = 4;		//Governs how many bullets Stray Cat can fire at once
 	int burstCount = 0;		//Keeps track of how many bullets Stray Cat has fired within this burst
 	int m_updateCount = 0; // Keeps track of how many update frames have passed

@@ -22,10 +22,10 @@ StrayCat::~StrayCat()
 void StrayCat::init(const BotInitialData &initialData, BotAttributes &attrib)
 {
 	m_initialData = initialData;
-	attrib.health=0.1;
-	attrib.motor=0.3;
+	attrib.health=0.2;
+	attrib.motor=0.1;
 	attrib.weaponSpeed=0.2;
-	attrib.weaponStrength=0.4;
+	attrib.weaponStrength=0.5;
 	//dir.set(m_rand.norm()*2.0 - 1.0, m_rand.norm()*2.0 - 1.0);
 	m_moveTarget.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
 	dir.set(1, 0);
@@ -35,7 +35,9 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 {
 	seenEnemy = false;
 	
-	//Movement in wander state
+	//Most of this is copied code, and I don't know what else I can legitimately do with this
+	//unless I wanted to get into genetics
+
 	output.moveDirection = m_moveTarget - input.position;
 	if (output.moveDirection.length() < 2)
 				{
@@ -54,32 +56,34 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 	}
 
 	if (seenEnemy) {
-		//Try to shoot and stuff.
+		//Set the enemy curr position
 		kf::Vector2 estimatedEnemyPosition = m_enemyCurrPos;
+
+		//Predict e enemys position some time in the future
 		if (m_enemyUpdateCount>-1)
 		{
 			kf::Vector2 delta = m_enemyCurrPos - m_enemyInitPos;
-			estimatedEnemyPosition = m_enemyCurrPos + (delta / (m_updateCount - m_enemyUpdateCount)) * 5;
-			Line l;
-			l.start = m_enemyCurrPos;
-			l.end = estimatedEnemyPosition;
-			l.r = 1;
-			l.g = 1;
-			l.b = 1;
-			output.lines.push_back(l);
+			estimatedEnemyPosition = m_enemyCurrPos + (delta / (m_updateCount - m_enemyUpdateCount)) * 4;
 		}
-		// Shooting
-		output.lookDirection = estimatedEnemyPosition - input.position;
-		output.moveDirection = output.lookDirection;
-		m_moveTarget = estimatedEnemyPosition;
-		output.action = BotOutput::shoot;
-		m_lookAngle -= m_initialData.scanFOV * 3;
+
+			// Shooting
+			output.lookDirection = estimatedEnemyPosition - input.position;
+			output.action = BotOutput::shoot;
+			m_lookAngle -= m_initialData.scanFOV * 3;
 	}
 	else {
 		// Scanning
-		m_lookAngle += m_initialData.scanFOV * 2;
+		m_lookAngle += m_initialData.scanFOV * m_lookAngleMultiplier;
 		output.lookDirection.set(cos(m_lookAngle), sin(m_lookAngle));
 		output.action = BotOutput::scan;
+
+		if (m_lookAngleMultiplier > 0) {
+			++m_lookAngleMultiplier;
+		}
+		else {
+			--m_lookAngleMultiplier;
+		}
+		m_lookAngleMultiplier *= -1;
 	}
 
 	gifNo = 3;

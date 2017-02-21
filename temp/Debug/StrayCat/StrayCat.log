@@ -6,9 +6,7 @@ c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(14): warning C424
 c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(25): warning C4305: '=': truncation from 'double' to 'float'
 c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(26): warning C4305: '=': truncation from 'double' to 'float'
 c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(27): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(28): warning C4305: '=': truncation from 'double' to 'float'
 c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(30): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(42): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(62): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
-     Creating library C:\Users\Kapa\killbots_student_2.8.0\temp\Debug\StrayCat\StrayCat_d.lib and object C:\Users\Kapa\killbots_student_2.8.0\temp\Debug\StrayCat\StrayCat_d.exp
+c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(44): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(66): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
   StrayCat.vcxproj -> C:\Users\Kapa\killbots_student_2.8.0\bin\data\bots\StrayCat\StrayCat_d.dll
