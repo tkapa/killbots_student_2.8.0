@@ -31,11 +31,17 @@ public:
 	kf::Vector2 m_moveTarget;
 	kf::Vector2 dir;
 	kf::Vector2 m_enemyInitPos; // The enemy's known position when spotted
+	kf::Vector2 m_enemyCurrPos; // The enemy's known position
 	BotInitialData m_initialData;
 
+	//Essential
+	bool seenEnemy = false;	//true if enemy is seen
+	float m_lookAngle;    //Angle Stray Cat will look;
+	int fireCount = 4;		//Governs how many bullets Stray Cat can fire at once
+	int burstCount = 0;		//Keeps track of how many bullets Stray Cat has fired within this burst
 	double lookAngle = 0;
 
-	//Will change the sprite of the bot when wanted
-	int gifNo = 0;
+	//Aesthetic
+	int gifNo = 0;		//Will change the sprite of the bot when wanted
 };
 #endif
