@@ -56,7 +56,7 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 	}
 
 	if (seenEnemy) {
-
+		//Try to shoot and stuff.
 	}
 	else {
 		// Scanning
