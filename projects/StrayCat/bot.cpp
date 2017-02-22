@@ -23,8 +23,8 @@ void StrayCat::init(const BotInitialData &initialData, BotAttributes &attrib)
 {
 	m_initialData = initialData;
 	attrib.health=0.2;
-	attrib.motor=0.2;
-	attrib.weaponSpeed=0.2;
+	attrib.motor=0.15;
+	attrib.weaponSpeed=0.25;
 	attrib.weaponStrength=0.4;
 	//dir.set(m_rand.norm()*2.0 - 1.0, m_rand.norm()*2.0 - 1.0);
 	m_moveTarget.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
@@ -48,11 +48,16 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 	//If the scanning outpur returns more than one object, scan through them
 	if (input.scanResult.size() > 0){
 		for (int i = 0; i < input.scanResult.size(); ++i){
-			//if the scanned object is an enemy change some varables, break out of the loop
+			//if the scanned object is an enemy change some varables
 			if (input.scanResult[i].type == VisibleThing::e_robot){
 				m_enemyCurrPos = input.scanResult[i].position;
 				seenEnemy = true;
-				break;
+			}
+
+			if (input.scanResult[i].type == VisibleThing::e_bullet) {
+				if (sqrt((input.scanResult[i].position.x * input.position.x) + (input.scanResult[i].position.y * input.position.y)) < 6) {
+					output.moveDirection = input.scanResult[i].position + input.position;
+				}
 			}
 		}			
 	}
@@ -70,24 +75,27 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 
 			// Shooting
 			output.lookDirection = estimatedEnemyPosition - input.position;
+			//output.moveDirection = estimatedEnemyPosition - input.position;
 			output.action = BotOutput::shoot;
 			m_lookAngle -= m_initialData.scanFOV * 3;
-
 	}
 	else {
 		// Scanning
 		m_lookAngle += m_initialData.scanFOV * m_lookAngleMultiplier;
 
-		output.lookDirection.set(-cos(m_lookAngle), sin(m_lookAngle));
-
 		//Increment the scanning cone to change the scanning pattern
-		if (m_lookAngleMultiplier > 0) {
-			m_lookAngleMultiplier += 0.75f;
+		if (m_enemyUpdateCount - m_updateCount < 10) {
+			if (m_lookAngleMultiplier > 0) {
+				m_lookAngleMultiplier += 0.75f;
+			}
+			else {
+				m_lookAngleMultiplier -= 0.75f;
+			}
+			m_lookAngleMultiplier *= -1;
+			output.lookDirection.set(cos(m_lookAngle), sin(m_lookAngle));
 		}
-		else {
-			m_lookAngleMultiplier -= 0.75f;
-		}
-		m_lookAngleMultiplier *= -1;
+		else
+			output.lookDirection = m_enemyCurrPos - input.position;
 
 		output.action = BotOutput::scan;
 	}
