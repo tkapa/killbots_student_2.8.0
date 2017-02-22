@@ -82,7 +82,7 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 	else {
 		// Scanning
 		m_lookAngle += m_initialData.scanFOV * m_lookAngleMultiplier;
-
+		//Insurance
 		//Increment the scanning cone to change the scanning pattern
 		if (m_enemyUpdateCount - m_updateCount < 10) {
 			if (m_lookAngleMultiplier > 0) {
