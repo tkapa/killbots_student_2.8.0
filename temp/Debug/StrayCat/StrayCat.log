@@ -1,13 +1,13 @@
 ﻿C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V140\Microsoft.CppBuild.targets(368,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
   bot.cpp
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(14): warning C4311: 'type cast': pointer truncation from 'StrayCat *const ' to 'int'
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(14): warning C4302: 'type cast': truncation from 'StrayCat *const ' to 'int'
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(14): warning C4244: 'argument': conversion from 'time_t' to 'kf::u32', possible loss of data
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(25): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(26): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(27): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(28): warning C4305: '=': truncation from 'double' to 'float'
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(30): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(44): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-c:\users\kapa\killbots_student_2.8.0\projects\straycat\bot.cpp(68): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
-  StrayCat.vcxproj -> C:\Users\Kapa\killbots_student_2.8.0\bin\data\bots\StrayCat\StrayCat_d.dll
+c:\users\tkapa\downloads\dudu\projects\straycat\bot.cpp(14): warning C4311: 'type cast': pointer truncation from 'StrayCat *const ' to 'int'
+c:\users\tkapa\downloads\dudu\projects\straycat\bot.cpp(14): warning C4302: 'type cast': truncation from 'StrayCat *const ' to 'int'
+c:\users\tkapa\downloads\dudu\projects\straycat\bot.cpp(14): warning C4244: 'argument': conversion from 'time_t' to 'kf::u32', possible loss of data
+c:\users\tkapa\downloads\dudu\projects\straycat\bot.cpp(32): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\tkapa\downloads\dudu\projects\straycat\bot.cpp(34): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\tkapa\downloads\dudu\projects\straycat\bot.cpp(35): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\tkapa\downloads\dudu\projects\straycat\bot.cpp(37): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\tkapa\downloads\dudu\projects\straycat\bot.cpp(51): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+c:\users\tkapa\downloads\dudu\projects\straycat\bot.cpp(75): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+  StrayCat.vcxproj -> C:\Users\tkapa\Downloads\dudu\bin\data\bots\StrayCat\StrayCat_d.dll
+  StrayCat.vcxproj -> C:\Users\tkapa\Downloads\dudu\bin\data\bots\StrayCat\StrayCat_d.pdb (Full PDB)

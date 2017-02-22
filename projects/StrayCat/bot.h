@@ -32,13 +32,14 @@ public:
 	kf::Vector2 dir;
 	kf::Vector2 m_enemyInitPos; // The enemy's known position when spotted
 	kf::Vector2 m_enemyCurrPos; // The enemy's known position
+								//Set the enemy curr position
+	kf::Vector2 estimatedEnemyPosition;
 	BotInitialData m_initialData;
 
 	//Essential
 	bool seenEnemy = false;	//true if enemy is seen
 	float m_lookAngle = 0;    //Angle Stray Cat will look;
 	float m_lookAngleMultiplier = 2; //Governs how large the rotation of the scan
-	int fireCount = 4;		//Governs how many bullets Stray Cat can fire at once
 	int burstCount = 0;		//Keeps track of how many bullets Stray Cat has fired within this burst
 	int m_updateCount = 0; // Keeps track of how many update frames have passed
 	int m_enemyUpdateCount = 0; //Notes when Stray Cat last saw the enemy

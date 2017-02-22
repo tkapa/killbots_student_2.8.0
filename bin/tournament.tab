@@ -1,0 +1,41 @@
+return {
+-- Table: {1}
+{
+   ["Blank27"]={2},
+   ["ManualBot"]={3},
+   ["LuaBot"]={4},
+},
+-- Table: {2}
+{
+   ["ManualBot"]={5},
+   ["LuaBot"]={6},
+   ["Stray Cat"]={7},
+},
+-- Table: {3}
+{
+   ["Stray Cat"]={8},
+},
+-- Table: {4}
+{
+   ["Stray Cat"]={9},
+   ["ManualBot"]={10},
+},
+-- Table: {5}
+{
+},
+-- Table: {6}
+{
+},
+-- Table: {7}
+{
+},
+-- Table: {8}
+{
+},
+-- Table: {9}
+{
+},
+-- Table: {10}
+{
+},
+}

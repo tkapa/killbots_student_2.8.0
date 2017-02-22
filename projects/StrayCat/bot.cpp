@@ -17,15 +17,22 @@ StrayCat::StrayCat()
 
 StrayCat::~StrayCat()
 {
+	delete(
+		&m_rand,
+		&m_moveTarget,
+		&dir,
+		&m_enemyInitPos,
+		&m_enemyCurrPos
+		);
 }
 
 void StrayCat::init(const BotInitialData &initialData, BotAttributes &attrib)
 {
 	m_initialData = initialData;
-	attrib.health=0.2;
-	attrib.motor=0.15;
-	attrib.weaponSpeed=0.25;
-	attrib.weaponStrength=0.4;
+	attrib.health=0.3;
+	attrib.motor=0.25;
+	attrib.weaponSpeed=0.225;
+	attrib.weaponStrength=0.225;
 	//dir.set(m_rand.norm()*2.0 - 1.0, m_rand.norm()*2.0 - 1.0);
 	m_moveTarget.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
 	dir.set(1, 0);
@@ -51,21 +58,15 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 			//if the scanned object is an enemy change some varables
 			if (input.scanResult[i].type == VisibleThing::e_robot){
 				m_enemyCurrPos = input.scanResult[i].position;
+				burstCount = m_updateCount + 4;
 				seenEnemy = true;
-			}
-
-			if (input.scanResult[i].type == VisibleThing::e_bullet) {
-				if (sqrt((input.scanResult[i].position.x * input.position.x) + (input.scanResult[i].position.y * input.position.y)) < 6) {
-					output.moveDirection = input.scanResult[i].position + input.position;
-				}
 			}
 		}			
 	}
 
 	if (seenEnemy) {
-		//Set the enemy curr position
-		kf::Vector2 estimatedEnemyPosition = m_enemyCurrPos;
 
+		estimatedEnemyPosition = m_enemyCurrPos;
 		//Predict the enemys position some time in the future
 		if (m_enemyUpdateCount>-1)
 		{
@@ -75,29 +76,23 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 
 			// Shooting
 			output.lookDirection = estimatedEnemyPosition - input.position;
-			//output.moveDirection = estimatedEnemyPosition - input.position;
 			output.action = BotOutput::shoot;
-			m_lookAngle -= m_initialData.scanFOV * 3;
+			//m_lookAngle -= m_initialData.scanFOV * 2;
 	}
 	else {
-		// Scanning
-		m_lookAngle += m_initialData.scanFOV * m_lookAngleMultiplier;
-		//Insurance
-		//Increment the scanning cone to change the scanning pattern
-		if (m_enemyUpdateCount - m_updateCount < 10) {
-			if (m_lookAngleMultiplier > 0) {
-				m_lookAngleMultiplier += 0.75f;
-			}
-			else {
-				m_lookAngleMultiplier -= 0.75f;
-			}
-			m_lookAngleMultiplier *= -1;
-			output.lookDirection.set(cos(m_lookAngle), sin(m_lookAngle));
+		if (m_updateCount <= burstCount) {
+			// Shooting
+			output.lookDirection = estimatedEnemyPosition - input.position;
+			output.action = BotOutput::shoot;
+			//m_lookAngle -= m_initialData.scanFOV * 2;
 		}
-		else
-			output.lookDirection = m_enemyCurrPos - input.position;
+		else {
+			m_lookAngle -= m_initialData.scanFOV * 2;
+			output.lookDirection.set(cos(m_lookAngle), sin(m_lookAngle));
 
-		output.action = BotOutput::scan;
+			//Output scan
+			output.action = BotOutput::scan;
+		}
 	}
 
 	gifNo = 3;
