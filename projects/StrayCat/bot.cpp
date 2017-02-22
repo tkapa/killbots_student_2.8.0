@@ -12,7 +12,7 @@ extern "C"
 StrayCat::StrayCat()
 {
 	m_rand(time(0)+(int)this);
-	currentState = ms_Wander;
+	//currentState = ms_Wander;
 }
 
 StrayCat::~StrayCat()
@@ -23,9 +23,9 @@ void StrayCat::init(const BotInitialData &initialData, BotAttributes &attrib)
 {
 	m_initialData = initialData;
 	attrib.health=0.2;
-	attrib.motor=0.1;
+	attrib.motor=0.2;
 	attrib.weaponSpeed=0.2;
-	attrib.weaponStrength=0.5;
+	attrib.weaponStrength=0.4;
 	//dir.set(m_rand.norm()*2.0 - 1.0, m_rand.norm()*2.0 - 1.0);
 	m_moveTarget.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
 	dir.set(1, 0);
@@ -45,8 +45,10 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 				}
 		output.motor = 1.0;
 
+	//If the scanning outpur returns more than one object, scan through them
 	if (input.scanResult.size() > 0){
 		for (int i = 0; i < input.scanResult.size(); ++i){
+			//if the scanned object is an enemy change some varables, break out of the loop
 			if (input.scanResult[i].type == VisibleThing::e_robot){
 				m_enemyCurrPos = input.scanResult[i].position;
 				seenEnemy = true;
@@ -59,7 +61,7 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 		//Set the enemy curr position
 		kf::Vector2 estimatedEnemyPosition = m_enemyCurrPos;
 
-		//Predict e enemys position some time in the future
+		//Predict the enemys position some time in the future
 		if (m_enemyUpdateCount>-1)
 		{
 			kf::Vector2 delta = m_enemyCurrPos - m_enemyInitPos;
@@ -70,20 +72,24 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 			output.lookDirection = estimatedEnemyPosition - input.position;
 			output.action = BotOutput::shoot;
 			m_lookAngle -= m_initialData.scanFOV * 3;
+
 	}
 	else {
 		// Scanning
 		m_lookAngle += m_initialData.scanFOV * m_lookAngleMultiplier;
-		output.lookDirection.set(cos(m_lookAngle), sin(m_lookAngle));
-		output.action = BotOutput::scan;
 
+		output.lookDirection.set(-cos(m_lookAngle), sin(m_lookAngle));
+
+		//Increment the scanning cone to change the scanning pattern
 		if (m_lookAngleMultiplier > 0) {
-			++m_lookAngleMultiplier;
+			m_lookAngleMultiplier += 0.75f;
 		}
 		else {
-			--m_lookAngleMultiplier;
+			m_lookAngleMultiplier -= 0.75f;
 		}
 		m_lookAngleMultiplier *= -1;
+
+		output.action = BotOutput::scan;
 	}
 
 	gifNo = 3;
