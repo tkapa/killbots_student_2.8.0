@@ -1,5 +1,6 @@
 #include "bot.h"
 #include "time.h"
+#include "pathfind.h"
 
 extern "C"
 {
@@ -12,7 +13,6 @@ extern "C"
 StrayCat::StrayCat()
 {
 	m_rand(time(0)+(int)this);
-	//currentState = ms_Wander;
 }
 
 StrayCat::~StrayCat()
@@ -33,35 +33,47 @@ void StrayCat::init(const BotInitialData &initialData, BotAttributes &attrib)
 	attrib.motor=0.25;
 	attrib.weaponSpeed=0.225;
 	attrib.weaponStrength=0.225;
-	//dir.set(m_rand.norm()*2.0 - 1.0, m_rand.norm()*2.0 - 1.0);
 	m_moveTarget.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
 	dir.set(1, 0);
+
+	int yay = map.m_nodes.size();
 }
 
 void StrayCat::update(const BotInput &input, BotOutput27 &output)
 {
+	openFieldAction(input, output);
+}
+
+void StrayCat::result(bool won)
+{
+}
+
+void StrayCat::bulletResult(bool hit)
+{
+
+}
+
+//Actions for open field map
+void StrayCat::openFieldAction(const BotInput &input, BotOutput27 &output) {
 	seenEnemy = false;
-	
-	//Most of this is copied code, and I don't know what else I can legitimately do with this
-	//unless I wanted to get into genetics
 
 	output.moveDirection = m_moveTarget - input.position;
 	if (output.moveDirection.length() < 2)
-				{
-					m_moveTarget.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
-				}
-		output.motor = 1.0;
+	{
+		m_moveTarget.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
+	}
+	output.motor = 1.0;
 
 	//If the scanning outpur returns more than one object, scan through them
-	if (input.scanResult.size() > 0){
-		for (int i = 0; i < input.scanResult.size(); ++i){
+	if (input.scanResult.size() > 0) {
+		for (int i = 0; i < input.scanResult.size(); ++i) {
 			//if the scanned object is an enemy change some varables
-			if (input.scanResult[i].type == VisibleThing::e_robot){
+			if (input.scanResult[i].type == VisibleThing::e_robot) {
 				m_enemyCurrPos = input.scanResult[i].position;
 				burstCount = m_updateCount + 4;
 				seenEnemy = true;
 			}
-		}			
+		}
 	}
 
 	if (seenEnemy) {
@@ -74,17 +86,15 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 			estimatedEnemyPosition = m_enemyCurrPos + (delta / (m_updateCount - m_enemyUpdateCount)) * 4;
 		}
 
-			// Shooting
-			output.lookDirection = estimatedEnemyPosition - input.position;
-			output.action = BotOutput::shoot;
-			//m_lookAngle -= m_initialData.scanFOV * 2;
+		// Shooting
+		output.lookDirection = estimatedEnemyPosition - input.position;
+		output.action = BotOutput::shoot;
 	}
 	else {
 		if (m_updateCount <= burstCount) {
 			// Shooting
 			output.lookDirection = estimatedEnemyPosition - input.position;
 			output.action = BotOutput::shoot;
-			//m_lookAngle -= m_initialData.scanFOV * 2;
 		}
 		else {
 			m_lookAngle -= m_initialData.scanFOV * 2;
@@ -96,11 +106,6 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 	}
 
 	gifNo = 3;
-		
-	//output.text.clear();
-	//char buf[100];
-	//sprintf(buf, "%d", input.health);
-	//output.text.push_back(TextMsg(buf, input.position - kf::Vector2(0.0f, 1.0f), 0.0f, 0.7f, 1.0f,80));
 
 	output.spriteFrame = gifNo;
 
@@ -112,11 +117,51 @@ void StrayCat::update(const BotInput &input, BotOutput27 &output)
 	m_updateCount++;
 }
 
-void StrayCat::result(bool won)
-{
-}
+void StrayCat::mazeAction(const BotInput &input, BotOutput27 &output) {
+	seenEnemy = false;
 
-void StrayCat::bulletResult(bool hit)
-{
+	/*
+		ManhattanDistance = abs(node.x-destination.x)+ abs(node.y-destination.y);
+		ChebychevDistance = max(abs(node.x-destination.x), abs(node.y-destination.y));
+		EuclideanDistance = (node-dest).magnitude();
 
+	//Node Member Details
+		F – Total cost of the node (G+H)
+		G – Cost of the path from the start so far
+		H – Heuristic cost of the remaining unexplored path to the destination
+		C – Cost to move onto this node
+		Wall – bool to say if the node is blocked
+		Parent – The node we came from
+
+		StateOpen - Node that has potential for the path
+		StateClosed - Nodes that shouldn't be used for this path again
+		StateNone - a node that hasn;t been encountered yet.
+
+		- Add the destination node to the list
+
+	//Process
+		- Find the smallest f value, made this the current node
+		- For each walkable node (not a wall)
+			- If the node is StateClosed, skip it
+			- If the node's G > G+C
+				- Make G = G+C
+				- Make the parent of that node the current node
+			-If the node is not on either list G = G+C && parent the current node to the assessed node
+		- Remove the current node from the open list and put it on the closed list
+
+		- Repeat the process until the destination is reached
+		- Translate given information into movement via parent nodes 
+	*/
+
+	//Set Sprite
+	gifNo = 3;
+	output.spriteFrame = gifNo;
+
+	//Update Required vars if seen
+	if (seenEnemy)
+	{
+		m_enemyUpdateCount = m_updateCount;
+		m_enemyInitPos = m_enemyCurrPos;
+	}
+	m_updateCount++;
 }

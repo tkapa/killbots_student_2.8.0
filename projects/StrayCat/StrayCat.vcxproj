@@ -12,9 +12,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bot.cpp" />
+    <ClCompile Include="pathfind.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bot.h" />
+    <ClInclude Include="pathfind.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BBCFFA18-1DC7-4C6F-811F-0F4479DB5942}</ProjectGuid>
