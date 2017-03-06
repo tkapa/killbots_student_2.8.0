@@ -46,12 +46,15 @@ public:
 	float m_lookAngle = 0;				//Angle Stray Cat will look;
 	float m_lookAngleMultiplier = 2;	//Governs how large the rotation of the scan
 	int burstCount = 0;					//Keeps track of how many bullets Stray Cat has fired within this burst
-	int m_updateCount = 0;				// Keeps track of how many update frames have passed
+	int m_updateCount = 0;				//Keeps track of how many update frames have passed
 	int m_enemyUpdateCount = 0;			//Notes when Stray Cat last saw the enemy
 	double lookAngle = 0;
 
 	//Pathfinding variables
-	std::vector<Node> chosenNodes;
+	std::vector<Node> m_chosenNodes;	//a list of nodes chosen to be traversed by the algorithm
+	Node m_currentNode;					//the node that is currently being used as a basis for calculation
+	kf::Vector2 m_nodePos;				//Position used for node
+	float g = 0;						//pathfinding total cost
 
 	//Aesthetic
 	int gifNo = 0;						//Will change the sprite of the bot when wanted

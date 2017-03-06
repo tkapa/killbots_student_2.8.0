@@ -153,6 +153,29 @@ void StrayCat::mazeAction(const BotInput &input, BotOutput27 &output) {
 		- Translate given information into movement via parent nodes 
 	*/
 
+	//Find a random node and set the destination node to that node
+	m_nodePos.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
+
+	if(m_initialData.mapData.data[(int)(m_nodePos.x*m_nodePos.y)].wall)
+		m_nodePos.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
+
+	m_currentNode = map.getNode(m_nodePos);
+	m_currentNode.state = Node::NodeState::StateOpen;
+
+	for (int x = -1; x < 1; ++x) {
+		for (int y = -1; y < 1; ++y) {
+			//Offset to find the nodes around the currentNode
+			kf::Vector2 pos = kf::Vector2(m_nodePos.x + x, m_nodePos.y + y);
+			Node checkingNode = map.getNode(pos);
+
+			//If the node is a wall
+			if (m_initialData.mapData.data[(int)(pos.x*pos.y)].wall && checkingNode.state == Node::NodeState::StateNone)
+				checkingNode.state = Node::NodeState::StateClosed;			
+			else
+				checkingNode.state = Node::NodeState::StateOpen;
+		}
+	}
+
 	//Set Sprite
 	gifNo = 3;
 	output.spriteFrame = gifNo;
