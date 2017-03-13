@@ -51,10 +51,16 @@ public:
 	double lookAngle = 0;
 
 	//Pathfinding variables
-	std::vector<Node> m_chosenNodes;	//a list of nodes chosen to be traversed by the algorithm
-	Node m_currentNode;					//the node that is currently being used as a basis for calculation
-	kf::Vector2 m_nodePos;				//Position used for node
-	float g = 0;						//pathfinding total cost
+	std::vector<NodePos> openList;			//a list of nodes chosen to be traversed by the algorithm
+	NodePos m_currentNode;					//the node that is currently being used as a basis for calculation
+	NodePos m_destination;
+	bool pathFound = false;
+	bool initPass = true;
+	bool destinationReached = false;
+	float m_g = 0;							//pathfinding total cost
+	NodePos m_smallestFNode;
+	std::vector<NodePos>::iterator itPos;
+
 
 	//Aesthetic
 	int gifNo = 0;						//Will change the sprite of the bot when wanted

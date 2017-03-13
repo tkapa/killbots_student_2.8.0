@@ -35,13 +35,14 @@ void StrayCat::init(const BotInitialData &initialData, BotAttributes &attrib)
 	attrib.weaponStrength=0.225;
 	m_moveTarget.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
 	dir.set(1, 0);
-
+	map.clear();
 	int yay = map.m_nodes.size();
 }
 
 void StrayCat::update(const BotInput &input, BotOutput27 &output)
 {
-	openFieldAction(input, output);
+	//openFieldAction(input, output);
+	mazeAction(input, output);
 }
 
 void StrayCat::result(bool won)
@@ -120,59 +121,55 @@ void StrayCat::openFieldAction(const BotInput &input, BotOutput27 &output) {
 void StrayCat::mazeAction(const BotInput &input, BotOutput27 &output) {
 	seenEnemy = false;
 
-	/*
-		ManhattanDistance = abs(node.x-destination.x)+ abs(node.y-destination.y);
-		ChebychevDistance = max(abs(node.x-destination.x), abs(node.y-destination.y));
-		EuclideanDistance = (node-dest).magnitude();
-
-	//Node Member Details
-		F – Total cost of the node (G+H)
-		G – Cost of the path from the start so far
-		H – Heuristic cost of the remaining unexplored path to the destination
-		C – Cost to move onto this node
-		Wall – bool to say if the node is blocked
-		Parent – The node we came from
-
-		StateOpen - Node that has potential for the path
-		StateClosed - Nodes that shouldn't be used for this path again
-		StateNone - a node that hasn;t been encountered yet.
-
-		- Add the destination node to the list
-
-	//Process
-		- Find the smallest f value, made this the current node
-		- For each walkable node (not a wall)
-			- If the node is StateClosed, skip it
-			- If the node's G > G+C
-				- Make G = G+C
-				- Make the parent of that node the current node
-			-If the node is not on either list G = G+C && parent the current node to the assessed node
-		- Remove the current node from the open list and put it on the closed list
-
-		- Repeat the process until the destination is reached
-		- Translate given information into movement via parent nodes 
-	*/
+	if (initPass || destinationReached) {
+		m_currentNode = NodePos(m_rand() % (map.m_width - 2) + 1, m_rand() % (map.m_height - 2) + 1);
+		
+		if (initPass)
+			initPass = false;
+	}
 
 	//Find a random node and set the destination node to that node
-	m_nodePos.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
+	openList.push_back(m_currentNode);
+	m_smallestFNode = m_currentNode;
+	map.getNode(m_smallestFNode).state = Node::NodeState::StateOpen;
 
-	if(m_initialData.mapData.data[(int)(m_nodePos.x*m_nodePos.y)].wall)
-		m_nodePos.set(m_rand() % (m_initialData.mapData.width - 2) + 1.5, m_rand() % (m_initialData.mapData.width - 2) + 1.5);
+	while (openList.size() >= 1 && !pathFound) {
+		for (auto it = openList.begin(); it != openList.end(); ++it) {
+			if (map.getNode(*it).f <= map.getNode(m_smallestFNode).f) {
+				m_smallestFNode = *it;
+			}
+		}
 
-	m_currentNode = map.getNode(m_nodePos);
-	m_currentNode.state = Node::NodeState::StateOpen;
+		for (int oy = -1; oy <= 2; ++oy) {
+			for (int ox = -1; ox <= 2; ++ox) {
+				if (ox == 0 && oy == 0)
+					continue;		
 
-	for (int x = -1; x < 1; ++x) {
-		for (int y = -1; y < 1; ++y) {
-			//Offset to find the nodes around the currentNode
-			kf::Vector2 pos = kf::Vector2(m_nodePos.x + x, m_nodePos.y + y);
-			Node checkingNode = map.getNode(pos);
-
-			//If the node is a wall
-			if (m_initialData.mapData.data[(int)(pos.x*pos.y)].wall && checkingNode.state == Node::NodeState::StateNone)
-				checkingNode.state = Node::NodeState::StateClosed;			
-			else
-				checkingNode.state = Node::NodeState::StateOpen;
+				NodePos adj = NodePos(m_currentNode.x + ox, m_enemyCurrPos.y + oy);
+				int m_newG = m_g + map.getNode(adj).c;
+				if (map.getNode(adj).state == Node::NodeState::StateClosed) {
+					continue;
+				}
+				else if (map.getNode(adj).state == Node::NodeState::StateOpen && m_newG < map.getNode(adj).g) {
+					map.getNode(adj).g = m_newG;
+					map.getNode(adj).h = abs(adj.x - m_destination.x) + abs(adj.y - m_destination.y);
+					map.getNode(adj).parent = m_currentNode;
+					map.getNode(adj).f = map.getNode(adj).g + map.getNode(adj).h;
+				}
+				else if (map.getNode(adj).state == Node::NodeState::StateNone) {
+					map.getNode(adj).g = m_newG;
+					map.getNode(adj).h = abs(adj.x - m_destination.x) + abs(adj.y - m_destination.y);
+					map.getNode(adj).parent = m_currentNode;
+					map.getNode(adj).f = map.getNode(adj).g + map.getNode(adj).h;
+					map.getNode(adj).state = Node::NodeState::StateOpen;
+					openList.push_back(adj);
+				}
+				map.getNode(m_currentNode).state = Node::NodeState::StateClosed;
+				openList.erase(itPos);
+				if (adj.x == m_destination.x && adj.y == m_destination.y) {
+					pathFound = true;
+				}
+			}
 		}
 	}
 
